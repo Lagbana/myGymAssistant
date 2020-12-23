@@ -1,11 +1,21 @@
 import { Module } from '@nestjs/common';
-import { ScrapperController } from './scrapper/scrapper.controller';
-import { ScrapperService } from './scrapper/scrapper.service';
-import { ScrapperModule } from './scrapper/scrapper.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ConfigModule } from '@nestjs/config';
+import { MorganModule, MorganInterceptor } from 'nest-morgan';
+import { CrawlerModule } from './crawler/crawler.module';
+import { HomeModule } from './home/home.module';
 
 @Module({
-  imports: [ScrapperModule],
-  controllers: [ ScrapperController],
-  providers: [ ScrapperService],
+  imports: [
+    HomeModule,
+    CrawlerModule,
+    MorganModule.forRoot(),
+    ConfigModule.forRoot()
+  ],
+  controllers: [],
+  providers: [{
+    provide: APP_INTERCEPTOR,
+    useClass: MorganInterceptor('dev'),
+  },],
 })
-export class AppModule {}
+export class AppModule { }
